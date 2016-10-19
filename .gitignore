@@ -3,7 +3,7 @@ main/settings/dev.py
 # Python
 
 *.py[cod]
-
+*.pyc
 # private files
 
 fab_config.py
