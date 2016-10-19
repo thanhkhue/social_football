@@ -51,13 +51,13 @@ class Account(models.Model):
     first_name      = models.CharField(max_length=50, verbose_name=_("First name"))
     middle_name     = models.CharField(max_length=50, blank=True, default='')
     last_name       = models.CharField(max_length=50, blank=True, default='')
-    password = models.CharField(_('password'), max_length=128,help_text=_("Use'[algo]$[salt]$[hexdigest]' or use the <a href=\"password/\">change password form</a>."))
+    password        = models.CharField(_('password'), max_length=128,help_text=_("Use'[algo]$[salt]$[hexdigest]' or use the <a href=\"password/\">change password form</a>."))
+    phone_number    = models.CharField(max_length = 15, validators=[phone_regex], blank=True)
     gender          = models.CharField(max_length=1, blank=True, default='', choices=GENDER_CHOICES)
     birthday        = models.DateField(null=True, blank=True, verbose_name=_("Date of birth"))
     description     = models.CharField(max_length=512, blank=True, default='', verbose_name=_('About'))
     timezone        = models.SmallIntegerField(default=INVALID_TIMEZONE)
     district_id     = models.ForeignKey(District, on_delete=models.PROTECT, db_index=False)
-    """UTC offset in minutes"""
 
     is_staff        = models.BooleanField(default=False)
 
@@ -75,41 +75,6 @@ class Account(models.Model):
 
     '''Deactivate'''
     is_disabled     = models.BooleanField(default=False, verbose_name=_('Is deactivated'))
-
-    @property
-    def avatar(self):
-        return self.get_avatar()
-
-    def set_password(self, raw_password):
-        import random
-        algo = 'sha1'
-        salt = get_hexdigest(algo, str(random.random()), str(random.random()))[:5]
-        hsh = get_hexdigest(algo, salt, raw_password)
-        self.password = '%s$%s$%s' % (algo, salt, hsh)
-
-
-    def get_gravatar(self, size=80):
-        gravatar_url = 'https' + "://www.gravatar.com/avatar/" + hashlib.md5(self.email.lower()).hexdigest() + "?"
-        return gravatar_url
-
-
-    def get_avatar(self):
-        # TODO: Not sure if i put filter here is good or not,
-        # because i know should not put the catch exception (DoesNotExist) here if using get.
-        # I've checked 'get' and 'filter' call the same SQL query
-
-        user_avatar = _main_models.AccountPhoto.objects.filter(user=self)
-        if user_avatar:
-            if self.avatar_type != Account.TYPE_UPLOAD:
-                self.avatar_type = Account.TYPE_UPLOAD
-                self.save(update_fields=['avatar_type'])
-            return user_avatar[0]
-        else:
-            if self.avatar_type == Account.TYPE_GRAVATAR:
-                gr_avatar_size = 300
-                return self.get_gravatar(gr_avatar_size)
-            # avatar default
-            return None
 
     def __unicode__(self):
         return self.first_name + ' ' + self.last_name
