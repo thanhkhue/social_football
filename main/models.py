@@ -52,6 +52,7 @@ class Account(models.Model):
     middle_name     = models.CharField(max_length=50, blank=True, default='')
     last_name       = models.CharField(max_length=50, blank=True, default='')
     password        = models.CharField(_('password'), max_length=128,help_text=_("Use'[algo]$[salt]$[hexdigest]' or use the <a href=\"password/\">change password form</a>."))
+    phone_regex         = RegexValidator(regex=r'^\+?1?\d{9,15}$', message="Phone number must be entered in the format: '+999999999'. Up to 15 digits allowed.")
     phone_number    = models.CharField(max_length = 15, validators=[phone_regex], blank=True)
     gender          = models.CharField(max_length=1, blank=True, default='', choices=GENDER_CHOICES)
     birthday        = models.DateField(null=True, blank=True, verbose_name=_("Date of birth"))
@@ -113,6 +114,8 @@ class Match(models.Model):
     created             = models.DateTimeField(auto_now_add=True, editable=False)
     updated             = models.DateTimeField(auto_now_add=True, editable=False)
     deleted             = models.DateTimeField(auto_now_add=True, editable=False)
+    def __unicode__(self):
+        return "Match of " + self.host_id.first_name.title() + ' in ' + self.field_id.name 
 
 class Slot(models.Model):
     user_id             = models.ForeignKey(Account)

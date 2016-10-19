@@ -6,3 +6,4 @@ Pillow==3.4.1
 pip==8.1.2
 setuptools==28.3.0
 wheel==0.30.0a0
+pytz
