@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Account, Field, Slot, Match, City, District
+from .models import Account, Field, Slot, Match, City, District, Photo
 
 class AccountAdmin(admin.ModelAdmin):
     list_display = ('username', 'email', 'is_active', 'is_staff', 'is_superuser')
@@ -13,7 +13,7 @@ class AccountAdmin(admin.ModelAdmin):
             'fields': ['first_name', 'username', 'email',
                        'is_active', 'is_staff', 'is_superuser',
                        'gender', 'birthday', 'description',
-                       'timezone', 'avatar_type','district_id'],
+                       'timezone', 'district_id', 'verification_code'],
         }),
     ]
 
@@ -31,7 +31,7 @@ class FieldAdmin(admin.ModelAdmin):
             ('Field Detail', {
                 'fields': ['name', 'address', 'phone_number', 'rating',
                 'price_morning', 'price_afternoon', 'price_evening',
-                'lat', 'lng', 'district_id'],
+                'lat', 'lng', 'district_id','size'],
             }),
         ]
     class Meta:
@@ -49,9 +49,12 @@ class DistrictAdmin(admin.ModelAdmin):
 class MatchAdmin(admin.ModelAdmin):
     pass
 
+class PhotoAdmin(admin.ModelAdmin):
+    pass
 admin.site.register(Field, FieldAdmin)
 admin.site.register(Account, AccountAdmin)
 admin.site.register(Slot, SlotAdmin)
 admin.site.register(City, CityAdmin)
 admin.site.register(District, DistrictAdmin)
 admin.site.register(Match, MatchAdmin)
+admin.site.register(Photo, PhotoAdmin)

@@ -1,9 +1,12 @@
 dj-database-url==0.4.1
 Django==1.10.2
 django-starter-box==0.1.1
-djangorestframework==3.4.7
+djangorestframework==2.3.13
 Pillow==3.4.1
 pip==8.1.2
 setuptools==28.3.0
 wheel==0.30.0a0
 pytz
+python-dateutil==2.2
+bson==0.4.3
+pymongo

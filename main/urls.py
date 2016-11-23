@@ -6,8 +6,11 @@ urlpatterns = [
     # url(r'^stadium/$', views.CityList.as_view(), name='stadium_list'),
     url(r'^field/(?P<pk>\d+)/$',views.FieldDetail.as_view(), name='field_detail'),
     url(r'^fields/$', views.FieldList.as_view(), name='field_list'),
+    url(r'^fieldlist/$', views.FieldListViewSet.as_view({'get': 'list'})),
     url(r'^match/(?P<pk>\d+)/$',views.MatchDetail.as_view(), name='match_detail'),
     url(r'^matches/$', views.MatchList.as_view(), name='match_list'),
     url(r'^slots/$', views.SlotList.as_view(), name='slot_list'),
     url(r'^slot/(?P<pk>\d+)/$',views.SlotDetail.as_view(), name='slot_detail'),
+    url(r'^register$', views.register, name='register'),
+    url(r'^login$', views.login, name='login'),
     ]
