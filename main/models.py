@@ -16,7 +16,7 @@ DEFAULT_EXAM_ID = 1
 
 def _createHash():
     hash = hashlib.md5()
-    hash.update(str(time.time()))
+    hash.update(unicode(str(time.time())))
     return  hash.hexdigest()[:-10]
 
 class City(models.Model):
