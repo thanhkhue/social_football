@@ -1,1 +1,1 @@
-web: gunicorn --log-file=- social_football.wsgi:application
+web: gunicorn social_football.wsgi --log-file -

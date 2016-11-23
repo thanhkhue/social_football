@@ -105,3 +105,5 @@ USE_TZ = False
 STATIC_URL = '/static/'
 
 DATETIME_FORMAT_TIMEZONE    = '%Y-%m-%dT%H:%M:%SZ' 
+
+STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
