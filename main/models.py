@@ -8,7 +8,7 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.models import AbstractBaseUser
 from django.core.validators import RegexValidator, MinLengthValidator, URLValidator
-from djbase.models import FixedCharField
+from djbase.models import FixedCharField, BaseModel
 
 from .managers import ActionRequestManager, ActivateEmailRequestManager, AccountManager
 
