@@ -1,1 +1,1 @@
-web: gunicorn social_football.wsgi:application --log-file=-
+web: /usr/local/bin/gunicorn -w 6 -t 30 --max-requests=50 -b 0.0.0.0:5000 social_football.wsgi:application
