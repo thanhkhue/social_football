@@ -8,7 +8,7 @@ from django.utils import timezone
 from django.contrib.auth.models import BaseUserManager
 from django.contrib.auth import authenticate, login as auth_login
 
-from exceptions import *
+from .exceptions import *
 
 from django.utils import importlib
 
