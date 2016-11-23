@@ -35,16 +35,19 @@ def get_access_token(user):
 
 def _login_normal(request):
     error = None
-    email_or_username = request.REQUEST.get("username", "") or request.REQUEST.get("email", "")
+    email_or_username = request.GET.get("username", "") or request.GET.get("email", "")
+    print "-----------------"
+    print request.GET.get("password")
 
     if "@" in email_or_username:
-        post = {k:request.REQUEST[k] for k in request.REQUEST}
+        post = {k:request.GET[k] for k in request.GET}
         post['email'] = email_or_username
         post['username'] = email_or_username
         form = LoginEmailForm(post)
-    else:
-        form = LoginUsernameForm(request.REQUEST)
         print form
+    else:
+        form = LoginUsernameForm(request.GET)
+        # print form
 
     if form.is_valid():
         data = form.cleaned_data
@@ -164,7 +167,6 @@ def login(request, output='json'):
                 user = AccountSerializer(request.user).data
                 print user
                 if user:
-                    print here
                     user['access_token'] = access_token.key if access_token else None
                     print user['access_token']
                     user['email'] = request.user.email
@@ -197,40 +199,6 @@ def login(request, output='json'):
             }
             return render(request, 'api/html/account_login.html', context)
 
-    elif request.method == "GET":
-        is_authenticated = request.user.is_authenticated()
-        if is_authenticated:
-            user = AccountSerializer(request.user).data
-            if user:
-                access_token = get_access_token(request.user)
-                user['access_token'] = access_token.key if access_token else None
-                user['email'] = request.user.email
-                user['conversion_rate']  = request.user.get_currency_rate()
-                if user['is_business']:
-                    try:
-                        business_acc = Business.objects.get(account=request.user)
-                    except Business.DoesNotExist:
-                        pass
-                    else:
-                        user['service_auto_create_place'] = Business.SERVICES_AUTO_CREATE_PLACE
-                        user['business_type'] = business_acc.business_type
-
-        # Response JSON or HTML
-        if output == 'json':
-            status = 200 if is_authenticated else 403
-            resp = {
-                "csrf_token"        : get_token(request),
-                "is_authenticated"  : is_authenticated,
-                "user"              : user,
-            }
-            return HttpResponse(JSONEncoder().encode(resp), content_type='application/json', status=status)
-        elif output == 'html':
-            context = {
-                "error"             : None,
-                "form"              : LoginUsernameForm(),
-                "is_post"           : False,
-            }
-            return render(request, 'api/html/account_login.html', context)
     else:
         code = 405
         error = "Method Not Allowed"

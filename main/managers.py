@@ -1,6 +1,7 @@
 
 import uuid
 import datetime
+from django.utils import importlib
 
 from django.db import models
 from django.utils import timezone
@@ -9,13 +10,16 @@ from django.contrib.auth import authenticate, login as auth_login
 
 from exceptions import *
 
+from django.utils import importlib
 
 OLD_SESSION_KEY = 'old_sessionid'
 
+_models = importlib.import_module('main.models')
 
 def social_login(request, user):
     ''' Log in and store old session id key '''
     old_session_id = request.session.session_key
+    user.backend = 'django.contrib.auth.backends.ModelBackend'
     rtn = auth_login(request, user)
     request.session[OLD_SESSION_KEY] = old_session_id
     return rtn
@@ -119,12 +123,14 @@ class AccountManager(BaseUserManager):
 
         if ("@" in string_id):
             email = self.normalize_email(string_id)
-            account = authenticate(Usernamename=email, password=password)
+
+            account = _models.Account.objects.get(email=email)
         else:
             username = self.normalize_username(string_id)
-            account = authenticate(username=username, password=password)
+            account = _models.Account.objects.get(username=username)
 
         if account:
+            print account
 
 
             # Set login
