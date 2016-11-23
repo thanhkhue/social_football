@@ -130,10 +130,7 @@ class AccountManager(BaseUserManager):
             account = _models.Account.objects.get(username=username)
 
         if account:
-            print account
 
-
-            # Set login
             self._set_login(account=account, request=request, remember=remember)
 
             return account

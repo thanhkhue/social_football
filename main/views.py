@@ -163,12 +163,9 @@ def login(request, output='json'):
                 ok = True
                 # Get access token
                 access_token = get_access_token(request.user)
-                print request.user
                 user = AccountSerializer(request.user).data
-                print user
                 if user:
                     user['access_token'] = access_token.key if access_token else None
-                    print user['access_token']
                     user['email'] = request.user.email
             else:
                 ok = False
@@ -232,10 +229,9 @@ class FieldList(generics.ListAPIView,
     queryset = Field.objects.all()
     serializer_class = FieldSerializer
 
-    def get(self, request, *args, **kwargs):
-        # if request.GET.get('lat') and request.GET.get('lng'):
-            
+    def get(self, request, *args, **kwargs):            
         return self.list(request, *args, **kwargs)
+
 
 class FieldListViewSet(viewsets.ModelViewSet):
 
@@ -257,11 +253,8 @@ class MatchList(generics.ListCreateAPIView):
     queryset            = Match.objects.all()
     serializer_class    = MatchSerializer
 
+
     def get(self, request, *args, **kwargs):
-        
-        # all_field_id = Field.objects.all().values_list('id', flat=True)
-        # for field_id in all_field_id:
-        #     loca
         self.queryset = self.queryset.all().order_by('-created')
         query_data = MatchSerializer(self.queryset, many=True)
         try:
@@ -274,6 +267,17 @@ class MatchList(generics.ListCreateAPIView):
             return Response(resp, status=400)
         else:
             return ls
+
+
+    # def post(self, request, *args, **kwargs):
+    #     error       = None
+    #     status_code = None
+
+    #     if request.user.is_authenticated():
+    #         request.DATA['']
+            
+
+
 
 class MatchDetail(generics.RetrieveAPIView):
 

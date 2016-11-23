@@ -28,15 +28,17 @@ class FieldSerializer(serializers.ModelSerializer):
 
 class MatchSerializer(serializers.ModelSerializer):
 
-    def to_native(self, object):
-        data = super(MatchSerializer, self).to_native(object)
-        print data
+    # def to_native(self, object):
+    #     data = super(MatchSerializer, self).to_native(object)
+    #     print data
     class Meta:
         model = Match
+        exclude = ('created','updated','deleted')
 
 class SlotSerializer(serializers.ModelSerializer):
     class Meta:
         model = Match
+
 
 class CitySerializer(serializers.ModelSerializer):
     class Meta:

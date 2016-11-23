@@ -8,7 +8,7 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.models import AbstractBaseUser
 from django.core.validators import RegexValidator, MinLengthValidator, URLValidator
-from djbase.models import FixedCharField, BaseModel
+from djbase.models import FixedCharField
 
 from .managers import ActionRequestManager, ActivateEmailRequestManager, AccountManager
 
@@ -30,7 +30,7 @@ class District(models.Model):
     def __unicode__(self):
         return self.district_name
 
-class Account(AbstractBaseUser, BaseModel):
+class Account(AbstractBaseUser):
 
     GENDER_MALE         = 'm'
     GENDER_FEMALE       = 'f'
