@@ -28,12 +28,11 @@ class FieldSerializer(serializers.ModelSerializer):
 
 class MatchSerializer(serializers.ModelSerializer):
 
-    # def to_native(self, object):
-    #     data = super(MatchSerializer, self).to_native(object)
-    #     print data
+    field_id    = FieldSerializer()
+    host_id     = AccountSerializer()
     class Meta:
         model = Match
-        exclude = ('created','updated','deleted')
+        fields = ('id', 'field_id' , 'host_id', 'status', 'maximum_players', 'price', 'start_time', 'end_time', 'is_verified')
 
 class SlotSerializer(serializers.ModelSerializer):
     class Meta:

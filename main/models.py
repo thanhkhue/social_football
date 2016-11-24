@@ -182,3 +182,16 @@ class Slot(models.Model):
     created             = models.DateTimeField(auto_now_add=True, editable=False)
     updated             = models.DateTimeField(auto_now_add=True, editable=False)
     deleted             = models.DateTimeField(auto_now_add=True, editable=False)
+
+
+# class Comment(models.Model):
+
+#     user            = models.ForeignKey(Account, on_delete=models.PROTECT, db_index=False, editable=False)
+#     object_id       = models.PositiveIntegerField(editable=False)
+#     comment         = TrimmedTextField()
+#     date_created    = models.DateTimeField(auto_now_add=True, editable=False)
+
+#     class Meta:
+#         index_together = [
+#             ["user", "date_created"],
+#         ]
