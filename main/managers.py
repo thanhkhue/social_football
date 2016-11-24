@@ -3,7 +3,7 @@ import uuid
 import datetime
 from django.utils import importlib
 
-from django.db import models
+from django.db import models, IntegrityError
 from django.utils import timezone
 from django.contrib.auth.models import BaseUserManager
 from django.contrib.auth import authenticate, login as auth_login

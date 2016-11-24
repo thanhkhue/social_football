@@ -319,7 +319,6 @@ class SlotList(generics.ListCreateAPIView,
             if get_access_token:
                 get_access_token = get_access_token.split(' ')[1]
                 get_access_token = get_access_token.split("'")[0]
-                print get_access_token
                 user_id = Token.objects.get(key=get_access_token).user_id
                 user_id = Account.objects.get(id=user_id)
                 match_id = Match.objects.get(id=match_id)
