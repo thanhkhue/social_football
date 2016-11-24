@@ -1,4 +1,5 @@
 import itertools
+from datetime import datetime
 
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
@@ -308,11 +309,14 @@ class MatchList(generics.ListCreateAPIView,
                     get_access_token = get_access_token.split("'")[0]
                     user_id = Token.objects.get(key=get_access_token).user_id
                     user_id = Account.objects.get(id=user_id)
-                    field_instance = Field.objects.get(field_id)
+                    start_time = datetime.strptime(start_time, '%b %d %Y %I:%M%p')
+                    end_time  = datetime.strptime(end_time, '%b %d %Y %I:%M%p')
+                    field_instance = Field.objects.get(id=field_id)
+
                     Match.objects.create(field_id=field_instance,maximum_players=maximum_players,
                                 start_time=start_time,end_time=end_time,price=price, host_id=user_id, sub_match=sub_match)
                     status_code = 200
-                    error = "success"
+                    error = "Match has been create successfully"
                 else:
                     error = 'Missing get_access_token'
                     status_code = 400
