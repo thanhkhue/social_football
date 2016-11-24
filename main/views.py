@@ -13,16 +13,17 @@ from rest_framework.authtoken.models import Token
 
 from .models import (
             Field, Account, Match, Slot,
-            City, District, Photo, ActivateEmailRequest
+            City, District, Photo, ActivateEmailRequest, Comment
             )
 
-from utils.jsonencoder import JSONEncoder
+from utils.jsonencoder import JSONEncoder, MultiRenderersAPIView
 
 from .serializers import (
             FieldSerializer, MatchSerializer,
             SlotSerializer, CitySerializer,
-            DistrictSerializer, AccountSerializer
+            DistrictSerializer, AccountSerializer, CommentSerializer
             )
+
 
 from .forms import RegisterForm, LoginEmailForm, LoginUsernameForm
 from .exceptions import *
@@ -315,3 +316,37 @@ class SlotDetail(generics.RetrieveAPIView):
 
     def get(self, request, *args, **kwargs):
         return self.retrieve(request, *args, **kwargs)
+
+class CommentList(generics.ListCreateAPIView,
+                  MultiRenderersAPIView):
+    serializer_class = CommentSerializer
+    queryset = Comment.objects.all()
+
+    def get(self, request, *args, **kwargs):
+        object_id    = request.GET.get('object_id')
+        if object_id:
+            self.queryset = self.queryset.filter(match_object_id=object_id)
+        else:
+            self.queryset = self.queryset.none()
+        return self.list(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        error = None
+        status_code = None
+        if request.user.is_authenticated():
+            object_id    = request.DATA.get('object_id')
+            if object_id:
+                request.DATA['object_id']          = object_id
+                request.DATA['user']            = request.user.id
+                return self.create(request, *args, **kwargs)
+            else:
+                error = 'Missing object id'
+                status_code = 400
+        else:
+            error = 'No permission'
+            status_code = 403
+        resp = {
+            'detail': error,
+            'status': status_code
+        }
+        return HttpResponse(JSONEncoder().encode(resp), status=status_code, content_type="application/json")

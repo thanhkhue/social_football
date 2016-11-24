@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import Account, Field, Match, Slot, City, District, Photo
+from .models import Account, Field, Match, Slot, City, District, Photo, Comment
 
 
 class AccountSerializer(serializers.ModelSerializer):
@@ -12,6 +12,13 @@ class AccountSerializer(serializers.ModelSerializer):
                    'groups', 'is_staff','is_superuser',
                    'created')
 
+class CommentSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = Comment
+        fields = ('user', 'comment','date_created')
+
+
 class PhotoSerializer(serializers.ModelSerializer):
 
     class Meta:
@@ -21,7 +28,6 @@ class PhotoSerializer(serializers.ModelSerializer):
 
 class FieldSerializer(serializers.ModelSerializer):
     photo = PhotoSerializer()
-    # source_url = serializers.ReadOnlyField(source='photos', read_only=True)
     class Meta:
         model = Field
         fields = ('id', 'name', 'address', 'lat', 'lng', 'photo')
@@ -46,3 +52,4 @@ class CitySerializer(serializers.ModelSerializer):
 class DistrictSerializer(serializers.ModelSerializer):
     class Meta:
         model = City
+
