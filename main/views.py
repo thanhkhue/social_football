@@ -288,6 +288,39 @@ class MatchList(generics.ListCreateAPIView,
         else:
             return ls
 
+    def post(self, request, *args, **kwargs):
+            get_access_token = None
+            try:
+                get_access_token = request.META.get('HTTP_AUTHORIZATION')
+            except:
+                raise Http404
+            else:
+                error = None
+                status_code = None
+                field_id             = request.GET.get('field_id')
+                maximum_players      = request.GET.get('maximum_players')
+                start_time           = request.GET.get('start_time')
+                end_time             = request.GET.get('end_time')
+                verification_code    = request.GET.get('verification_code')
+                price                = request.GET.get('price')
+                if get_access_token:
+                    get_access_token = get_access_token.split(' ')[1]
+                    get_access_token = get_access_token.split("'")[0]
+                    user_id = Token.objects.get(key=get_access_token).user_id
+                    user_id = Account.objects.get(id=user_id)
+                    field_instance = Field.objects.get(field_id)
+                    Match.objects.create(verification_code=verification_code,match_id=match_id,user_id=user_id)
+                    status_code = 200
+                    error = "success"
+                else:
+                    error = 'Missing get_access_token'
+                    status_code = 400
+                resp = {
+                    'detail': error,
+                    'status': status_code
+                }
+            return HttpResponse(JSONEncoder().encode(resp), status=status_code, content_type="application/json")            
+
 
 class MatchDetail(generics.RetrieveAPIView):
 
