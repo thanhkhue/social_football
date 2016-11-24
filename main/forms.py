@@ -13,7 +13,7 @@ class PasswordForm(forms.ModelForm):
 class RegisterForm(ModelForm):
     class Meta:
         model = Account
-        fields = ["first_name", "email", "username", "password", "district_id"]
+        fields = ["first_name", "email", "username", "password", "district_id", "last_name", "gender", "phone_number"]
 
 class LoginForm(PasswordForm):
     remember = forms.BooleanField(required=False)

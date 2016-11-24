@@ -8,9 +8,9 @@ class AccountSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Account
-        exclude = ('password', 'email',  'is_active', 
+        exclude = ('password', 'is_active', 
                    'groups', 'is_staff','is_superuser',
-                   'created', 'time_zone')
+                   'created')
 
 class PhotoSerializer(serializers.ModelSerializer):
 
@@ -32,7 +32,7 @@ class MatchSerializer(serializers.ModelSerializer):
     host_id     = AccountSerializer()
     class Meta:
         model = Match
-        fields = ('id', 'field_id' , 'host_id', 'status', 'maximum_players', 'price', 'start_time', 'end_time', 'is_verified')
+        fields = ('id', 'field_id' , 'host_id', 'status', 'maximum_players', 'price', 'start_time', 'end_time', 'is_verified', 'slots')
 
 class SlotSerializer(serializers.ModelSerializer):
     class Meta:

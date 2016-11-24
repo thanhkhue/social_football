@@ -5,6 +5,7 @@ import hashlib
 import time
 
 from django.db import models
+from django.core.validators import MinValueValidator, MaxValueValidator
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.models import AbstractBaseUser
 from django.core.validators import RegexValidator, MinLengthValidator, URLValidator
@@ -13,7 +14,7 @@ from djbase.models import FixedCharField, BaseModel
 from .managers import ActionRequestManager, ActivateEmailRequestManager, AccountManager
 
 DEFAULT_EXAM_ID = 1
-
+URLDEFAULT      = "https://thesocietypages.org/socimages/files/2009/05/vimeo.jpg"
 def _createHash():
     hash = hashlib.md5()
     hash.update(unicode(str(time.time())))
@@ -61,6 +62,7 @@ class Account(AbstractBaseUser):
     district_id         = models.ForeignKey(District, on_delete=models.PROTECT, db_index=False)
     verification_code   = models.CharField(max_length=100,default=_createHash(),unique=True)
     is_staff            = models.BooleanField(default=False)
+    avatar              = models.URLField(default=URLDEFAULT)
     is_active           = models.BooleanField(default=True)
     is_superuser        = models.BooleanField(default=False)
     created             = models.DateTimeField(auto_now_add=True, editable=False)
@@ -157,7 +159,6 @@ class Field(models.Model):
 
 
 
-
 class Match(models.Model):
     field_id            = models.ForeignKey(Field, on_delete=models.PROTECT, db_index=False)
     host_id             = models.ForeignKey(Account)
@@ -166,12 +167,22 @@ class Match(models.Model):
     price               = models.FloatField()
     start_time          = models.DateTimeField()
     end_time            = models.DateTimeField()
+    slots               = models.IntegerField(default=1,validators=[MinValueValidator(1),
+                                       MaxValueValidator(12)])
     is_verified         = models.BooleanField(default=False)
     created             = models.DateTimeField(auto_now_add=True, editable=False)
     updated             = models.DateTimeField(auto_now_add=True, editable=False)
     deleted             = models.DateTimeField(auto_now_add=True, editable=False)
+    
     def __unicode__(self):
         return "Match of " + self.host_id.first_name.title() + ' in ' + self.field_id.name 
+
+    def count_slots(self):
+        self.slots = Slot.objects.filter(match_id=self.id).count()
+        self.save(update_fields=['slots', ])
+
+        return self.slots
+
 
 class Slot(models.Model):
     user_id             = models.ForeignKey(Account)
@@ -182,6 +193,7 @@ class Slot(models.Model):
     created             = models.DateTimeField(auto_now_add=True, editable=False)
     updated             = models.DateTimeField(auto_now_add=True, editable=False)
     deleted             = models.DateTimeField(auto_now_add=True, editable=False)
+
 
 
 # class Comment(models.Model):

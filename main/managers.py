@@ -146,7 +146,7 @@ class AccountManager(BaseUserManager):
         fiuzu_logout(request)
 
 
-    def __init_account(self, email, first_name, username, is_superuser, district_id):
+    def __init_account(self, email, first_name, username, is_superuser, district_id, phone_number, gender, last_name):
         if not email:
             raise ValueError('Email must be set.')
 
@@ -161,12 +161,18 @@ class AccountManager(BaseUserManager):
             is_active=is_superuser,
             is_superuser=is_superuser,
             district_id=district_id,
+            last_name=last_name,
+            gender=gender,
+            phone_number=phone_number,
         )
 
         return account
 
-    def __create_user(self, email, first_name, password, is_superuser,district_id, username=None):
-        account = self.__init_account(email=email, first_name=first_name, is_superuser=is_superuser, district_id=district_id, username=username)
+    def __create_user(self, email, first_name, password, is_superuser,district_id, phone_number, last_name, gender, username=None):
+        account = self.__init_account(email=email, first_name=first_name,
+                                    is_superuser=is_superuser,
+                                    district_id=district_id, phone_number=phone_number,
+                                    gender=gender, last_name=last_name , username=username)
         account.set_password(password)
         account.full_clean(validate_unique=False)
         email = account.email # get cleaned email
@@ -187,5 +193,5 @@ class AccountManager(BaseUserManager):
         password = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(l))
         return password
 
-    def create_user(self, email, first_name, password,district_id,  username=None):
-        return self.__create_user(email, first_name, password, False,district_id, username)
+    def create_user(self, email, first_name, password, district_id, phone_number, last_name, gender,  username=None):
+        return self.__create_user(email, first_name, password, False,district_id, phone_number, last_name, gender, username)

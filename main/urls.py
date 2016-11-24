@@ -13,4 +13,6 @@ urlpatterns = [
     url(r'^slot/(?P<pk>\d+)/$',views.SlotDetail.as_view(), name='slot_detail'),
     url(r'^register$', views.register, name='register'),
     url(r'^login$', views.login, name='login'),
+    url(r'^account/$', views.AccountView.as_view(), name='account_view'),
+    url(r'^account/(?P<pk>\d+)/$', views.AccountDetail.as_view(), name='account_detail')
     ]

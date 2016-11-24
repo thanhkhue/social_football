@@ -97,11 +97,14 @@ def register(request):
 
             try:
                 account = Account.objects.create_user(
-                    email=data['email'],
-                    first_name=data['first_name'],
-                    password=data['password'],
-                    username=data['username'],
-                    district_id=data['district_id']
+                    email           =data['email'],
+                    first_name      =data['first_name'],
+                    password        =data['password'],
+                    username        =data['username'],
+                    district_id     =data['district_id'],
+                    gender          =data['gender'],
+                    phone_number    =data['phone_number'],
+                    last_name       =data['last_name']
                 )
             except AccountEmailTakenError:
                 error = "The email has been taken."
@@ -114,11 +117,14 @@ def register(request):
                 success = True
                 msg = "Create new user successfully"
                 account_dict = {
-                    "id"        : account.id,
-                    "name"      : account.first_name,
-                    "email"     : account.email,
-                    "username"  : account.username,
-                }
+                    "id"            : account.id,
+                    "name"          : account.first_name,
+                    "email"         : account.email,
+                    "username"      : account.username,
+                    "phone_number"  : account.phone_number,
+                    "gender"        : account.gender,
+                    "last_name"     : account.last_name
+                    }
         else:
             error = "Form is not valid"
         resp = {
@@ -223,6 +229,23 @@ def logout(request):
     return HttpResponse(JSONEncoder().encode(resp), content_type="application/json")
 
 
+class AccountView(generics.ListCreateAPIView):
+
+    queryset = Account.objects.filter(is_staff=False, is_superuser=False)
+    serializer_class = AccountSerializer
+
+    def get(self, request, *args, **kwargs):            
+        return self.list(request, *args, **kwargs)
+
+
+class AccountDetail(generics.RetrieveAPIView):
+    queryset = queryset = Account.objects.filter(is_staff=False, is_superuser=False)
+    serializer_class = AccountSerializer
+
+    def get(self, request, *args, **kwargs):
+        return self.retrieve(request, *args, **kwargs)
+
+
 class FieldList(generics.ListAPIView,
                generics.GenericAPIView):
 
@@ -267,16 +290,6 @@ class MatchList(generics.ListCreateAPIView):
             return Response(resp, status=400)
         else:
             return ls
-
-
-    # def post(self, request, *args, **kwargs):
-    #     error       = None
-    #     status_code = None
-
-    #     if request.user.is_authenticated():
-    #         request.DATA['']
-            
-
 
 
 class MatchDetail(generics.RetrieveAPIView):
