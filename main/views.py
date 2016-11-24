@@ -267,7 +267,8 @@ class FieldDetail(generics.RetrieveAPIView):
     def get(self, request, *args, **kwargs):
         return self.retrieve(request, *args, **kwargs)
 
-class MatchList(generics.ListCreateAPIView):
+class MatchList(generics.ListCreateAPIView,
+                        MultiRenderersAPIView):
 
     queryset            = Match.objects.all()
     serializer_class    = MatchSerializer
