@@ -38,11 +38,11 @@ class MatchSerializer(serializers.ModelSerializer):
     host_id     = AccountSerializer()
     class Meta:
         model = Match
-        fields = ('id', 'field_id' , 'host_id', 'status', 'maximum_players', 'price', 'start_time', 'end_time', 'is_verified', 'slots')
+        fields = ('id', 'sub_match', 'field_id' , 'host_id', 'maximum_players', 'price', 'start_time', 'end_time', 'is_verified', 'slots')
 
 class SlotSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Match
+        model = Slot
 
 
 class CitySerializer(serializers.ModelSerializer):
@@ -51,5 +51,5 @@ class CitySerializer(serializers.ModelSerializer):
 
 class DistrictSerializer(serializers.ModelSerializer):
     class Meta:
-        model = City
+        model = District
 

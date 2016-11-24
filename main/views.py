@@ -118,13 +118,14 @@ def register(request):
                 success = True
                 msg = "Create new user successfully"
                 account_dict = {
-                    "id"            : account.id,
-                    "name"          : account.first_name,
-                    "email"         : account.email,
-                    "username"      : account.username,
-                    "phone_number"  : account.phone_number,
-                    "gender"        : account.gender,
-                    "last_name"     : account.last_name
+                    "id"                : account.id,
+                    "name"              : account.first_name,
+                    "email"             : account.email,
+                    "username"          : account.username,
+                    "phone_number"      : account.phone_number,
+                    "gender"            : account.gender,
+                    "last_name"         : account.last_name,
+                    "verification_code" :account.verification_code
                     }
         else:
             error = "Form is not valid"
@@ -151,6 +152,7 @@ def login(request, output='json'):
     user = None
     rtn = None
     rtn_error = None
+
     if request.method == "POST":
 
         firsttime = False
@@ -195,13 +197,6 @@ def login(request, output='json'):
                 'access_token'      : access_token.key if access_token else None,
             }
             return HttpResponse(JSONEncoder().encode(resp), content_type='application/json', status=status)
-        elif output == 'html':
-            context = {
-                "error"             : error,
-                "form"              : rtn.get('form') or LoginUsernameForm(),
-                "is_post"           : True,
-            }
-            return render(request, 'api/html/account_login.html', context)
 
     else:
         code = 405
@@ -213,21 +208,21 @@ def login(request, output='json'):
 
         return HttpResponse(JSONEncoder().encode(resp), status=code, content_type="application/json")
 
-@csrf_exempt
-def logout(request):
-    """
-    This view helps user logout and return the form for login again.
-    """
+# @csrf_exempt
+# def logout(request):
+#     """
+#     This view helps user logout and return the form for login again.
+#     """
 
-    if request.user.is_authenticated():
-        _mp.track(request.user.id, 'Logout')
+#     if request.user.is_authenticated():
+#         _mp.track(request.user.id, 'Logout')
 
-    Account.objects.logout(request)
-    resp = {
-        'ok': True
-    }
+#     Account.objects.logout(request)
+#     resp = {
+#         'ok': True
+#     }
 
-    return HttpResponse(JSONEncoder().encode(resp), content_type="application/json")
+#     return HttpResponse(JSONEncoder().encode(resp), content_type="application/json")
 
 
 class AccountView(generics.ListCreateAPIView):
@@ -301,13 +296,45 @@ class MatchDetail(generics.RetrieveAPIView):
     def get(self, request, *args, **kwargs):
         return self.retrieve(request, *args, **kwargs)
 
-class SlotList(generics.ListAPIView):
+class SlotList(generics.ListCreateAPIView,
+                MultiRenderersAPIView):
 
     queryset = Slot.objects.all()
     serializer_class = SlotSerializer
 
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        get_access_token = None
+        try:
+            get_access_token = request.META.get('HTTP_AUTHORIZATION')
+        except:
+            raise Http404
+        else:
+            error = None
+            status_code = None
+            match_id             = request.GET.get('match_id')
+            verification_code    = request.GET.get('verification_code')
+            if get_access_token:
+                get_access_token = get_access_token.split(' ')[1]
+                get_access_token = get_access_token.split("'")[0]
+                print get_access_token
+                user_id = Token.objects.get(key=get_access_token).user_id
+                user_id = Account.objects.get(id=user_id)
+                match_id = Match.objects.get(id=match_id)
+                Slot.objects.create(verification_code=verification_code,match_id=match_id,user_id=user_id)
+                status_code = 200
+                error = "success"
+            else:
+                error = 'Missing get_access_token'
+                status_code = 400
+            resp = {
+                'detail': error,
+                'status': status_code
+            }
+        return HttpResponse(JSONEncoder().encode(resp), status=status_code, content_type="application/json")
+
 
 class SlotDetail(generics.RetrieveAPIView):
 
@@ -336,8 +363,8 @@ class CommentList(generics.ListCreateAPIView,
         if request.user.is_authenticated():
             object_id    = request.DATA.get('object_id')
             if object_id:
-                request.DATA['object_id']          = object_id
-                request.DATA['user']            = request.user.id
+                request.DATA['object_id']           = object_id
+                request.DATA['user']                = request.user.id
                 return self.create(request, *args, **kwargs)
             else:
                 error = 'Missing object id'

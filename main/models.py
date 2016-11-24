@@ -157,14 +157,9 @@ class Field(models.Model):
     def __unicode__(self):
         return self.name
 
-
-
-
-
 class Match(models.Model):
     field_id            = models.ForeignKey(Field, on_delete=models.PROTECT, db_index=False)
     host_id             = models.ForeignKey(Account)
-    status              = models.SmallIntegerField()
     maximum_players     = models.SmallIntegerField(default=12)
     price               = models.FloatField()
     start_time          = models.DateTimeField()
@@ -189,7 +184,6 @@ class Match(models.Model):
 class Slot(models.Model):
     user_id             = models.ForeignKey(Account)
     match_id            = models.ForeignKey(Match)
-    quantity            = models.SmallIntegerField()
     is_verified         = models.BooleanField(default=False)
     verification_code   = models.CharField(max_length=10,default=_createHash(),unique=True)
     created             = models.DateTimeField(auto_now_add=True, editable=False)
