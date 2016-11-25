@@ -16,6 +16,8 @@ Including another URLconf
 from django.conf.urls import  include, url
 
 from django.contrib import admin
+from django.conf.urls.static import static
+import settings
 
 admin.autodiscover()
 
@@ -24,4 +26,4 @@ urlpatterns = [
 	# url(r'^$', include('blog.urls', namespace="blog", app_name='blog')),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^api/', include('main.urls', namespace="api", app_name='api')),
-]
+] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
