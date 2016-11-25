@@ -45,7 +45,7 @@ def _login_normal(request):
         post['username'] = email_or_username
         form = LoginEmailForm(post)
     else:
-        form = LoginUsernameForm(request.POST)
+        form = LoginUsernameForm(request.GET)
         # print form
 
     if form.is_valid():
