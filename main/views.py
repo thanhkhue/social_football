@@ -37,16 +37,13 @@ def get_access_token(user):
 
 def _login_normal(request):
     error = None
-    email_or_username = request.GET.get("username", "") or request.GET.get("email", "")
-    print "-----------------"
-    print request.GET.get("password")
+    email_or_username = request.GET.get("username") or request.GET.get("email")
 
     if "@" in email_or_username:
         post = {k:request.GET[k] for k in request.GET}
         post['email'] = email_or_username
         post['username'] = email_or_username
         form = LoginEmailForm(post)
-        print form
     else:
         form = LoginUsernameForm(request.GET)
         # print form
@@ -54,7 +51,6 @@ def _login_normal(request):
     if form.is_valid():
         data = form.cleaned_data
         email_or_username = data.get('email') or data.get("username")
-        print email_or_username
 
         try:
             account = Account.objects.login(string_id=email_or_username, password=data['password'], request=request, remember=data['remember'])
@@ -155,6 +151,10 @@ def login(request, output='json'):
     rtn_error = None
 
     if request.method == "POST":
+        print request.POST
+        print request.REQUEST
+        print "khuebui"
+        print request.GET
 
         firsttime = False
         access_token = None

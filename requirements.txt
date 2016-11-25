@@ -1,7 +1,7 @@
 bson==0.4.3
 click==6.6
 dj-database-url==0.4.1
-Django==1.8
+Django==1.7
 django-admin-tools==0.8.0
 django-starter-box==0.1.1
 djangorestframework==2.3.13

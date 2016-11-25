@@ -167,7 +167,7 @@ class Match(models.Model):
     end_time            = models.DateTimeField()
     slots               = models.IntegerField(default=1,validators=[MinValueValidator(1),
                                        MaxValueValidator(12)])
-    is_verified         = models.BooleanField(default=False)
+    is_verified         = models.BooleanField(default=True)
     created             = models.DateTimeField(auto_now_add=True, editable=False)
     updated             = models.DateTimeField(auto_now_add=True, editable=False)
     deleted             = models.DateTimeField(auto_now_add=True, editable=False)
