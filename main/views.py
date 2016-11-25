@@ -37,15 +37,15 @@ def get_access_token(user):
 
 def _login_normal(request):
     error = None
-    email_or_username = request.GET.get("username") or request.GET.get("email")
+    email_or_username = request.POST.get("username", "") or request.POST.get("email", "")
 
     if "@" in email_or_username:
-        post = {k:request.GET[k] for k in request.GET}
+        post = {k:request.POST[k] for k in request.POST}
         post['email'] = email_or_username
         post['username'] = email_or_username
         form = LoginEmailForm(post)
     else:
-        form = LoginUsernameForm(request.GET)
+        form = LoginUsernameForm(request.POST)
         # print form
 
     if form.is_valid():
@@ -152,9 +152,7 @@ def login(request, output='json'):
 
     if request.method == "POST":
         print request.POST
-        print request.REQUEST
-        print "khuebui"
-        print request.GET
+
 
         firsttime = False
         access_token = None
