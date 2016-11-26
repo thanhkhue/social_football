@@ -12,11 +12,21 @@ class AccountSerializer(serializers.ModelSerializer):
                    'groups', 'is_staff','is_superuser',
                    'created')
 
+class CustomAccountSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Account
+        exclude = ('password', 'is_active', 'verification_code', 'birthday', 'email',
+                   'groups', 'is_staff','is_superuser', 'timezone', 'gender', 'district_id',
+                   'created', 'last_login', 'is_disabled', 'description', 'middle_name')
+
 class CommentSerializer(serializers.ModelSerializer):
     
+    user = CustomAccountSerializer()
     class Meta:
         model = Comment
         fields = ('user', 'comment','date_created')
+        exclude = ('last_login', 'is_disabled', 'verification_code', 'timezone', 'description', 'birthday', 'gender', 'middle_name')
 
 
 class PhotoSerializer(serializers.ModelSerializer):

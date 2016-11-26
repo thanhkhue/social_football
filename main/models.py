@@ -178,14 +178,17 @@ class Slot(models.Model):
     user_id             = models.ForeignKey(Account)
     match_id            = models.ForeignKey(Match)
     is_verified         = models.BooleanField(default=False)
-    verification_code   = models.CharField(max_length=10,default=_createHash(),unique=True)
+    verification_code   = models.CharField(max_length=30,default=_createHash(),unique=True)
     created             = models.DateTimeField(auto_now_add=True, editable=False)
     updated             = models.DateTimeField(auto_now_add=True, editable=False)
     deleted             = models.DateTimeField(auto_now_add=True, editable=False)
 
+    def __unicode__(self):
+        return "Slof of " + self.user_id.username + " in " + self.match_id.field_id.name
+
 class Comment(models.Model):
 
-    user            = models.ForeignKey(Account, on_delete=models.PROTECT, db_index=False, editable=False)
+    user            = models.ForeignKey(Account)
     match_object    = models.ForeignKey(Match, null=True)
     comment         = models.TextField(max_length=2000)
     date_created    = models.DateTimeField(auto_now_add=True, editable=False)

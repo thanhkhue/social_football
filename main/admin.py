@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Account, Field, Slot, Match, City, District, Photo
+from .models import Account, Field, Slot, Match, City, District, Photo, Comment
 
 class AccountAdmin(admin.ModelAdmin):
     list_display = ('username', 'email', 'is_active', 'is_staff', 'is_superuser')
@@ -51,6 +51,11 @@ class MatchAdmin(admin.ModelAdmin):
 
 class PhotoAdmin(admin.ModelAdmin):
     pass
+
+class CommentAdmin(admin.ModelAdmin):
+    list_display = ('user', 'match_object', 'date_created', 'comment')
+
+
 admin.site.register(Field, FieldAdmin)
 admin.site.register(Account, AccountAdmin)
 admin.site.register(Slot, SlotAdmin)
@@ -58,3 +63,4 @@ admin.site.register(City, CityAdmin)
 admin.site.register(District, DistrictAdmin)
 admin.site.register(Match, MatchAdmin)
 admin.site.register(Photo, PhotoAdmin)
+admin.site.register(Comment, CommentAdmin)

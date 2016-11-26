@@ -243,7 +243,6 @@ class FieldList(generics.ListAPIView,
                 c2 = [float(f[0]),float(f[1])]
                 if haversine(c1,c2) < MAX_DISTANCE:
                     id_list.append(f[2])
-        print id_list
         self.queryset = self.queryset.filter(id__in=id_list)
 
         return self.list(request, *args, **kwargs)
@@ -338,6 +337,9 @@ class SlotList(generics.ListCreateAPIView,
     serializer_class = SlotSerializer
 
     def get(self, request, *args, **kwargs):
+        match_object    = request.REQUEST.get('match_object')
+        if match_object:
+            self.queryset = self.queryset.filter(match_id=match_object)
         return self.list(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
@@ -350,14 +352,14 @@ class SlotList(generics.ListCreateAPIView,
             error = None
             status_code = None
             match_id             = request.GET.get('match_id')
-            verification_code    = request.GET.get('verification_code')
+            # verification_code    = request.GET.get('verification_code')
             if get_access_token:
                 get_access_token = get_access_token.split(' ')[1]
                 get_access_token = get_access_token.split("'")[0]
                 user_id = Token.objects.get(key=get_access_token).user_id
                 user_id = Account.objects.get(id=user_id)
                 match_id = Match.objects.get(id=match_id)
-                Slot.objects.create(verification_code=verification_code,match_id=match_id,user_id=user_id)
+                Slot.objects.create(match_id=match_id,user_id=user_id)
                 status_code = 200
                 error = "success"
             else:
@@ -376,6 +378,10 @@ class SlotDetail(generics.RetrieveAPIView):
     serializer_class = SlotSerializer
 
     def get(self, request, *args, **kwargs):
+        match_object    = request.REQUEST.get('match_object')
+        print match_object
+        if match_object:
+            self.queryset = self.queryset.filter(match_id=match_object)
         return self.retrieve(request, *args, **kwargs)
 
 class CommentList(generics.ListCreateAPIView,
@@ -384,9 +390,9 @@ class CommentList(generics.ListCreateAPIView,
     queryset = Comment.objects.all()
 
     def get(self, request, *args, **kwargs):
-        object_id    = request.GET.get('object_id')
-        if object_id:
-            self.queryset = self.queryset.filter(match_object_id=object_id)
+        match_object    = request.REQUEST.get('match_object')
+        if match_object:
+            self.queryset = self.queryset.filter(match_object_id=match_object)
         else:
             self.queryset = self.queryset.none()
         return self.list(request, *args, **kwargs)
@@ -394,18 +400,21 @@ class CommentList(generics.ListCreateAPIView,
     def post(self, request, *args, **kwargs):
         error = None
         status_code = None
-        if request.user.is_authenticated():
-            object_id    = request.DATA.get('object_id')
-            if object_id:
-                request.DATA['object_id']           = object_id
-                request.DATA['user']                = request.user.id
-                return self.create(request, *args, **kwargs)
-            else:
-                error = 'Missing object id'
-                status_code = 400
+        match_object    = request.REQUEST.get('match_object')
+        try:
+            get_access_token = request.META.get('HTTP_AUTHORIZATION')
+        except:
+            raise Http404
         else:
-            error = 'No permission'
-            status_code = 403
+            get_access_token = get_access_token.split(' ')[1]
+            get_access_token = get_access_token.split("'")[0]
+            user_id = Token.objects.get(key=get_access_token).user_id
+            user_instance = Account.objects.get(id=user_id)
+            match_instance = Match.objects.get(id=match_object)
+            cmt = request.REQUEST.get('comment')
+            Comment.objects.create(comment=cmt,user=user_instance,match_object=match_instance)
+            status_code = 200
+            error = "create comment success"
         resp = {
             'detail': error,
             'status': status_code
