@@ -11,8 +11,6 @@ from django.contrib.auth.models import AbstractBaseUser
 from django.core.validators import RegexValidator, MinLengthValidator, URLValidator
 from djbase.models import FixedCharField, BaseModel
 
-from django.contrib.gis.geos import Point
-
 from .managers import ActionRequestManager, ActivateEmailRequestManager, AccountManager
 
 DEFAULT_EXAM_ID = 1
