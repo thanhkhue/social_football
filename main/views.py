@@ -243,7 +243,7 @@ class FieldList(generics.ListAPIView,
                 c2 = [float(f[0]),float(f[1])]
                 if haversine(c1,c2) < MAX_DISTANCE:
                     id_list.append(f[2])
-        self.queryset = self.queryset.filter(id__in=id_list)
+            self.queryset = self.queryset.filter(id__in=id_list)
 
         return self.list(request, *args, **kwargs)
 
@@ -379,7 +379,6 @@ class SlotDetail(generics.RetrieveAPIView):
 
     def get(self, request, *args, **kwargs):
         match_object    = request.REQUEST.get('match_object')
-        print match_object
         if match_object:
             self.queryset = self.queryset.filter(match_id=match_object)
         return self.retrieve(request, *args, **kwargs)
