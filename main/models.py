@@ -147,12 +147,6 @@ class Field(models.Model):
     def __unicode__(self):
         return self.name
 
-    # def get_location(self):
-    #     # Remember, longitude FIRST!
-    #     self.location = Point(self.lng, self.lat)
-    #     rtn = self.save(update_fields=['location'])
-    #     return rtn
-
 
 
 class Match(models.Model):

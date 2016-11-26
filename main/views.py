@@ -232,31 +232,19 @@ class FieldList(generics.ListAPIView,
 
         lat = request.REQUEST.get('lat')
         lng = request.REQUEST.get('lng')
-        result = {}
+        id_list = []
         if lat is not None and lng is not None:
             MAX_DISTANCE = 4
             obj_number = 0
             c1 = [float(lat),float(lng)]
-            fields_location = Field.objects.all().values_list('lat','lng','name')
+            fields_location = Field.objects.all().values_list('lat','lng','id')
             for f in fields_location:
+                print f[2]
                 c2 = [float(f[0]),float(f[1])]
                 if haversine(c1,c2) < MAX_DISTANCE:
-                    obj_number += 1
-                    result = {
-                    obj_number : {
-                        'name': f[2],
-                        'lat' : float(f[0]),
-                        'lng' : float(f[1]) 
-                    }
-                    }
-
-            status_code = 200
-            resp = {
-                    'detail': result,
-                    'status': status_code
-                }
-
-        print result
+                    id_list.append(f[2])
+        print id_list
+        self.queryset = self.queryset.filter(id__in=id_list)
 
         return self.list(request, *args, **kwargs)
 
