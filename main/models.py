@@ -11,6 +11,8 @@ from django.contrib.auth.models import AbstractBaseUser
 from django.core.validators import RegexValidator, MinLengthValidator, URLValidator
 from djbase.models import FixedCharField, BaseModel
 
+from django.contrib.gis.geos import Point
+
 from .managers import ActionRequestManager, ActivateEmailRequestManager, AccountManager
 
 DEFAULT_EXAM_ID = 1
@@ -121,20 +123,10 @@ class PhotoSize(object):
         
 class Photo(models.Model):
 
-    # SIZES           = {
-    #     "xs"    : PhotoSize(name="xs", width= 60,  height= 45,  is_fixed=True,  quality=60),
-    #     "ss"    : PhotoSize(name="ss", width=100,  height=100,  is_fixed=True,  quality=70),
-    #     "sm"    : PhotoSize(name="sm", width=120,  height= 90,  is_fixed=True,  quality=75),
-    #     "md"    : PhotoSize(name="md", width=320,  height=240,  is_fixed=True,  quality=85),
-    #     "lg"    : PhotoSize(name="lg", width=800,  height=600,  is_fixed=False, quality=90),
-    #     "og"    : PhotoSize(name="og", width=0,    height=0,),
-    # }
-    source_size_og             = models.URLField(blank=True)
-    source_size_lg             = models.URLField(blank=True)
-    source_size_md             = models.URLField(blank=True)
-    source_size_sm             = models.URLField(blank=True)
-    source_size_xs             = models.URLField(blank=True)
-    source_size_ss             = models.URLField(blank=True)
+    img1                = models.URLField(blank=True)
+    img2                = models.URLField(blank=True)
+    img3                = models.URLField(blank=True)
+
 
 class Field(models.Model):
     name                = models.CharField(max_length=50, blank=True)
@@ -152,10 +144,18 @@ class Field(models.Model):
     created             = models.DateTimeField(auto_now_add=True, editable=False)
     deleted             = models.DateTimeField(auto_now_add=True, editable=False)
     size                = models.CharField(max_length=1, blank=True,choices=SIZE_CHOICES)
-
+    location            = models.FloatField(default=0)
 
     def __unicode__(self):
         return self.name
+
+    # def get_location(self):
+    #     # Remember, longitude FIRST!
+    #     self.location = Point(self.lng, self.lat)
+    #     rtn = self.save(update_fields=['location'])
+    #     return rtn
+
+
 
 class Match(models.Model):
     field_id            = models.ForeignKey(Field, on_delete=models.PROTECT, db_index=False)

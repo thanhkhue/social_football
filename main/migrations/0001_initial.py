@@ -31,7 +31,7 @@ class Migration(migrations.Migration):
                 ('birthday', models.DateField(null=True, verbose_name='Date of birth', blank=True)),
                 ('description', models.CharField(default='', max_length=512, verbose_name='About', blank=True)),
                 ('timezone', models.SmallIntegerField(default=32000)),
-                ('verification_code', models.CharField(default=b'e6f2fcb1a430cb601b1727', unique=True, max_length=100)),
+                ('verification_code', models.CharField(default=b'33a61614a6830777dceb1b', unique=True, max_length=100)),
                 ('is_staff', models.BooleanField(default=False)),
                 ('avatar', models.URLField(default='https://thesocietypages.org/socimages/files/2009/05/vimeo.jpg')),
                 ('is_active', models.BooleanField(default=True)),
@@ -136,12 +136,9 @@ class Migration(migrations.Migration):
             name='Photo',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('source_size_og', models.URLField(blank=True)),
-                ('source_size_lg', models.URLField(blank=True)),
-                ('source_size_md', models.URLField(blank=True)),
-                ('source_size_sm', models.URLField(blank=True)),
-                ('source_size_xs', models.URLField(blank=True)),
-                ('source_size_ss', models.URLField(blank=True)),
+                ('img1', models.URLField(blank=True)),
+                ('img2', models.URLField(blank=True)),
+                ('img3', models.URLField(blank=True)),
             ],
             options={
             },
@@ -152,7 +149,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('is_verified', models.BooleanField(default=False)),
-                ('verification_code', models.CharField(default=b'77cec3655cda5c3ba06f55', unique=True, max_length=10)),
+                ('verification_code', models.CharField(default=b'0462ef1d5261ec888846d0', unique=True, max_length=10)),
                 ('created', models.DateTimeField(auto_now_add=True)),
                 ('updated', models.DateTimeField(auto_now_add=True)),
                 ('deleted', models.DateTimeField(auto_now_add=True)),

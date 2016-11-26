@@ -23,14 +23,12 @@ class PhotoSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Photo
-        fields = ('source_size_og','source_size_lg',
-            'source_size_md', 'source_size_sm', 'source_size_xs', 'source_size_ss' )
+        fields = ('img1', 'img2', 'img3')
 
 class FieldSerializer(serializers.ModelSerializer):
     photo = PhotoSerializer()
     class Meta:
         model = Field
-        fields = ('id', 'name', 'address', 'lat', 'lng', 'photo')
 
 class MatchSerializer(serializers.ModelSerializer):
 

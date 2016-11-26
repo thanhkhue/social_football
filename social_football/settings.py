@@ -104,6 +104,22 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
 
 STATIC_URL = '/static/'
-STATIC_ROOT = '/static/'
+PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__))
+PROJECT_DIR = os.path.join(PROJECT_ROOT,'../main')
+STATIC_ROOT= os.path.join(PROJECT_DIR,'static/')
+
+STATICFILES_DIRS = (
+    os.path.join(PROJECT_ROOT,'static/'),
+)
+
+
 DATETIME_FORMAT_TIMEZONE    = '%Y-%m-%dT%H:%M:%SZ' 
 
+HAYSTACK_CONNECTIONS = {
+    'default': {
+        'ENGINE': 'haystack.backends.elasticsearch_backend.ElasticsearchSearchEngine',
+        'URL': 'http://127.0.0.1:9200/',
+        'INDEX_NAME': 'haystack',
+        'INCLUDE_SPELLING': True,
+    },
+}

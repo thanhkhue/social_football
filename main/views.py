@@ -28,7 +28,7 @@ from .serializers import (
 
 from .forms import RegisterForm, LoginEmailForm, LoginUsernameForm
 from .exceptions import *
-
+from fixtures import haversine
 
 
 def get_access_token(user):
@@ -44,8 +44,6 @@ def _login_normal(request):
     print post_data
 
     form = LoginUsernameForm(post_data)
-    print "-----------------"
-    print form
 
     if form.is_valid():
         data = form.cleaned_data
@@ -91,7 +89,6 @@ def register(request):
         account_dict = {}
         if form.is_valid():
             data = form.cleaned_data
-
             try:
                 account = Account.objects.create_user(
                     email           =data['email'],
@@ -206,22 +203,6 @@ def login(request, output='json'):
 
         return HttpResponse(JSONEncoder().encode(resp), status=code, content_type="application/json")
 
-# @csrf_exempt
-# def logout(request):
-#     """
-#     This view helps user logout and return the form for login again.
-#     """
-
-#     if request.user.is_authenticated():
-#         _mp.track(request.user.id, 'Logout')
-
-#     Account.objects.logout(request)
-#     resp = {
-#         'ok': True
-#     }
-
-#     return HttpResponse(JSONEncoder().encode(resp), content_type="application/json")
-
 
 class AccountView(generics.ListCreateAPIView):
 
@@ -242,11 +223,41 @@ class AccountDetail(generics.RetrieveAPIView):
 
 class FieldList(generics.ListAPIView,
                generics.GenericAPIView):
+    
 
     queryset = Field.objects.all()
     serializer_class = FieldSerializer
 
-    def get(self, request, *args, **kwargs):            
+    def get(self, request, *args, **kwargs):
+
+        lat = request.REQUEST.get('lat')
+        lng = request.REQUEST.get('lng')
+        result = {}
+        if lat is not None and lng is not None:
+            MAX_DISTANCE = 4
+            obj_number = 0
+            c1 = [float(lat),float(lng)]
+            fields_location = Field.objects.all().values_list('lat','lng','name')
+            for f in fields_location:
+                c2 = [float(f[0]),float(f[1])]
+                if haversine(c1,c2) < MAX_DISTANCE:
+                    obj_number += 1
+                    result = {
+                    obj_number : {
+                        'name': f[2],
+                        'lat' : float(f[0]),
+                        'lng' : float(f[1]) 
+                    }
+                    }
+
+            status_code = 200
+            resp = {
+                    'detail': result,
+                    'status': status_code
+                }
+
+        print result
+
         return self.list(request, *args, **kwargs)
 
 
@@ -321,7 +332,7 @@ class MatchList(generics.ListCreateAPIView,
                     'detail': error,
                     'status': status_code
                 }
-            return HttpResponse(JSONEncoder().encode(resp), status=status_code, content_type="application/json")            
+            return HttpResponse(JSONEncoder().encode(resp), status=status_code, content_type="application/json")
 
 
 class MatchDetail(generics.RetrieveAPIView):
