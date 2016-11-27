@@ -169,7 +169,7 @@ class Match(models.Model):
 
     def count_slots(self):
         self.slots = Slot.objects.filter(match_id=self.id).count()
-        self.save(update_fields=['slots', ])
+        self.save(update_fields=['slots'])
 
         return self.slots
 
