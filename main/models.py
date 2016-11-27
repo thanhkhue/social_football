@@ -143,6 +143,7 @@ class Field(models.Model):
     deleted             = models.DateTimeField(auto_now_add=True, editable=False)
     size                = models.CharField(max_length=1, blank=True,choices=SIZE_CHOICES)
     location            = models.FloatField(default=0)
+    distance            = models.FloatField(default=0.0)
 
     def __unicode__(self):
         return self.name

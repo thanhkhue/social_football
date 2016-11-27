@@ -39,6 +39,7 @@ class FieldSerializer(serializers.ModelSerializer):
     photo = PhotoSerializer()
     class Meta:
         model = Field
+        exclude = ('distance')
 
 class MatchSerializer(serializers.ModelSerializer):
 

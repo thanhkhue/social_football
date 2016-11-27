@@ -240,8 +240,10 @@ class FieldList(generics.ListAPIView,
             for f in fields_location:
                 print f[2]
                 c2 = [float(f[0]),float(f[1])]
-                if haversine(c1,c2) < MAX_DISTANCE:
+                dis = haversine(c1,c2)
+                if dis < MAX_DISTANCE:
                     id_list.append(f[2])
+                Field.objects.get(id=int(f[3])).di
             self.queryset = self.queryset.filter(id__in=id_list)
 
         return self.list(request, *args, **kwargs)
@@ -319,12 +321,16 @@ class MatchList(generics.ListCreateAPIView,
                     Match.objects.create(field_id=field_instance,maximum_players=maximum_players,
                                 start_time=start_time,end_time=end_time,price=price, host_id=user_id, sub_match=sub_match)
                     status_code = 200
-                    error = "Match has been create successfully"
+                    response = {
+                    "detail"           : "Match has been create successfully",
+                    "start_time"       : start_time,
+                    "maximum_players"  : maximum_players,   
+                    }
                 else:
                     error = 'Missing get_access_token'
                     status_code = 400
                 resp = {
-                    'detail': error,
+                    'detail': response,
                     'status': status_code
                 }
             return HttpResponse(JSONEncoder().encode(resp), status=status_code, content_type="application/json")
@@ -353,7 +359,7 @@ class SlotList(generics.ListCreateAPIView,
     def post(self, request, *args, **kwargs):
         get_access_token = None
         try:
-            get_access_token = request.META.get('HTTP_AUTHORIZATION')
+            get_access_token = request.REQUEST.get('token')
         except:
             raise Http404
         else:
@@ -362,14 +368,12 @@ class SlotList(generics.ListCreateAPIView,
             match_id             = request.GET.get('match_id')
             # verification_code    = request.GET.get('verification_code')
             if get_access_token:
-                get_access_token = get_access_token.split(' ')[1]
-                get_access_token = get_access_token.split("'")[0]
                 user_id = Token.objects.get(key=get_access_token).user_id
                 user_id = Account.objects.get(id=user_id)
                 match_id = Match.objects.get(id=match_id)
                 Slot.objects.create(match_id=match_id,user_id=user_id)
                 status_code = 200
-                error = "success"
+                error = "You has been join into the match."
             else:
                 error = 'Missing get_access_token'
                 status_code = 400
@@ -409,12 +413,12 @@ class CommentList(generics.ListCreateAPIView,
         status_code = None
         match_object    = request.REQUEST.get('match_object')
         try:
-            get_access_token = request.META.get('HTTP_AUTHORIZATION')
+            get_access_token = request.REQUEST.get('token')
         except:
             raise Http404
         else:
-            get_access_token = get_access_token.split(' ')[1]
-            get_access_token = get_access_token.split("'")[0]
+            # get_access_token = get_access_token.split(' ')[1]
+            # get_access_token = get_access_token.split("'")[0]
             user_id = Token.objects.get(key=get_access_token).user_id
             user_instance = Account.objects.get(id=user_id)
             match_instance = Match.objects.get(id=match_object)
