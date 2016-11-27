@@ -243,7 +243,6 @@ class FieldList(generics.ListAPIView,
                 dis = haversine(c1,c2)
                 if dis < MAX_DISTANCE:
                     id_list.append(f[2])
-                Field.objects.get(id=int(f[3])).di
             self.queryset = self.queryset.filter(id__in=id_list)
 
         return self.list(request, *args, **kwargs)
