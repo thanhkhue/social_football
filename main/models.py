@@ -154,7 +154,7 @@ class Match(models.Model):
     host_id             = models.ForeignKey(Account)
     maximum_players     = models.SmallIntegerField(default=12)
     price               = models.FloatField()
-    sub_match           = models.SmallIntegerField(default=1)
+    sub_match           = models.CharField(default='A', max_length=2)
     start_time          = models.DateTimeField()
     end_time            = models.DateTimeField()
     slots               = models.IntegerField(default=1,validators=[MinValueValidator(1),

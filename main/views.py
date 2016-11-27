@@ -1,6 +1,5 @@
 import itertools
-from datetime import datetime
-
+import datetime
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 from django.middleware.csrf import get_token
@@ -287,7 +286,7 @@ class MatchList(generics.ListCreateAPIView,
     def post(self, request, *args, **kwargs):
             get_access_token = None
             try:
-                get_access_token = request.META.get('HTTP_AUTHORIZATION')
+                get_access_token = request.REQUEST.get('token')
             except:
                 raise Http404
             else:
@@ -296,16 +295,25 @@ class MatchList(generics.ListCreateAPIView,
                 field_id             = request.GET.get('field_id')
                 maximum_players      = request.GET.get('maximum_players')
                 start_time           = request.GET.get('start_time')
+                start_time           = datetime.datetime.strptime(start_time, '%Y-%m-%d-%H-%M-%S' )
+
                 end_time             = request.GET.get('end_time')
-                price                = request.GET.get('price')
+                end_time             = datetime.datetime.strptime(end_time, '%Y-%m-%d-%H-%M-%S' )
+                if start_time.hour < 12:
+                    price = Field.objects.get(id=field_id).price_morning
+                elif start_time.hour < 16:
+                    price = Field.objects.get(id=field_id).price_afternoon
+                else:
+                    price = Field.objects.get(id=field_id).price_evening
+                # price                = request.GET.get('price')
                 sub_match            = request.GET.get('sub_match')
                 if get_access_token:
-                    get_access_token = get_access_token.split(' ')[1]
-                    get_access_token = get_access_token.split("'")[0]
+                    # get_access_token = get_access_token.split(' ')[1]
+                    # get_access_token = get_access_token.split("'")[0]
                     user_id = Token.objects.get(key=get_access_token).user_id
                     user_id = Account.objects.get(id=user_id)
-                    start_time = datetime.strptime(start_time, '%b %d %Y %I:%M%p')
-                    end_time  = datetime.strptime(end_time, '%b %d %Y %I:%M%p')
+                    # start_time = datetime.datetime.strptime(start_time, '%Y-%m-%d-%H-%M-%S')
+                    # end_time  = datetime.datetime.strptime(end_time, '%Y-%m-%d-%H-%M-%S')
                     field_instance = Field.objects.get(id=field_id)
 
                     Match.objects.create(field_id=field_instance,maximum_players=maximum_players,
