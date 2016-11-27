@@ -417,8 +417,6 @@ class CommentList(generics.ListCreateAPIView,
         except:
             raise Http404
         else:
-            # get_access_token = get_access_token.split(' ')[1]
-            # get_access_token = get_access_token.split("'")[0]
             user_id = Token.objects.get(key=get_access_token).user_id
             user_instance = Account.objects.get(id=user_id)
             match_instance = Match.objects.get(id=match_object)
